@@ -14,7 +14,7 @@ The internal data model includes fields like `sentimentHint`, `emotionScore`, an
 Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note List
 ```
 
-## Features (v0.1)
+## Features
 
 **Emotion Recording**
 - 4 emotion emojis with auto-mapped percentage scores
@@ -27,6 +27,13 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 - Edit mode with multi-select deletion
 - Floating action button for quick entry
 - Tap to edit existing notes
+
+**ChatGPT Export & Analysis** *(v0.2)*
+- Share notes to ChatGPT app with auto-generated analysis prompts
+- 3 prompt types: Emotion Pattern Analysis, Weekly/Monthly Report, Counseling
+- Export all notes or selected notes only
+- JSON file export with structured data (emotion_timeline, sentiment distribution)
+- FileProvider-based secure file sharing
 
 **Data Safety**
 - Auto-save draft on app background/exit
@@ -49,7 +56,7 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 | Database | Room 2.6.1 + KSP |
 | Preferences | DataStore |
 | Serialization | Gson |
-| Build | Gradle 8.5, AGP 8.2.2, Version Catalog |
+| Build | Gradle 8.13, AGP 8.13.2, Version Catalog |
 | Min SDK | 26 (Android 8.0) |
 | Target SDK | 34 (Android 14) |
 
@@ -66,6 +73,9 @@ app/src/main/java/com/rnote/app/
 │   │   └── RNoteDatabase.kt
 │   └── repository/
 │       └── NoteRepository.kt
+├── export/
+│   ├── ExportModels.kt            # Export data models + prompt templates
+│   └── ExportHelper.kt            # JSON/text export + Share Intent
 ├── navigation/
 │   └── NavGraph.kt
 └── ui/
@@ -97,6 +107,16 @@ git clone https://github.com/CrabAI/r-note-app.git
 ## Versioning
 
 This project follows [Semantic Versioning](https://semver.org/).
+
+### v0.2.0 — ChatGPT Export & Analysis
+
+> Tag: [`v0.2.0`](https://github.com/CrabAI/r-note-app/releases/tag/v0.2.0) | Date: 2026.02.12
+
+- ChatGPT analysis sharing with 3 prompt types (Emotion Analysis, Weekly Report, Counseling)
+- JSON file export with emotion_timeline and summary statistics
+- Export all notes or selected notes via edit mode
+- Prompt selector bottom sheet UI
+- FileProvider-based secure file sharing
 
 ### v0.1.0 — MVP Initial Release
 

@@ -96,11 +96,87 @@ app/src/main/java/com/rnote/app/
 
 ---
 
-### 다음 버전 (v0.2.0) 후보 작업
+### 다음 버전 후보 작업
 
-- [ ] JSON Export 기능 (ChatGPT 연동 준비)
 - [ ] 주간/월간 감정 통계 화면
 - [ ] 노트 검색 기능
 - [ ] 다크 모드 지원
 - [ ] Google 로그인 연동 + 데이터 마이그레이션
-- [ ] ChatGPT API 연동 (감정 분석 리포트)
+- [ ] ChatGPT API 직접 연동 (감정 분석 리포트)
+
+---
+---
+
+## ver.0.2.0 — ChatGPT 내보내기 & 분석 요청
+
+**작업일**: 2026.02.12
+**Git Tag**: `v0.2.0`
+
+---
+
+### 구현 완료 항목
+
+#### 1. 내보내기 데이터 모델 (`export/ExportModels.kt`)
+- `ExportPackage` — 전체 내보내기 패키지 구조
+  - `export_info`: 내보내기 메타정보 (기간, 총 개수, 평균 감정점수, 감정분포)
+  - `emotion_timeline`: 시계열 감정 데이터 (날짜별 emoji + score + sentiment)
+  - `notes`: 개별 노트 상세 데이터
+- `ExportMapper` — NoteEntity → ExportPackage 변환 로직
+  - 평균 감정점수 자동 계산
+  - sentiment 분포 (positive/neutral/negative) 집계
+  - 날짜 포맷팅 (yyyy-MM-dd HH:mm)
+
+#### 2. ChatGPT 프롬프트 시스템 (`export/ExportModels.kt`)
+- `PromptType` enum — 3종 분석 프롬프트
+  - **감정 패턴 분석**: 감정 흐름, 트리거, 변화 추이 분석 요청
+  - **주간/월간 리포트**: 요약 통계 리포트 생성 요청
+  - **종합 심리 상담**: 따뜻한 상담 관점의 조언 요청
+- 텍스트 내보내기 시 프롬프트 자동 삽입
+- 감정 타임라인 + 개별 노트 데이터 구조화 텍스트 생성
+
+#### 3. 내보내기 유틸 (`export/ExportHelper.kt`)
+- **JSON 파일 내보내기**: Gson PrettyPrinting → 캐시 파일 → FileProvider URI 공유
+- **ChatGPT 텍스트 공유**: text/plain Share Intent로 ChatGPT 앱에 직접 전달
+- FileProvider 설정 (`xml/file_paths.xml`, AndroidManifest 등록)
+
+#### 4. UI 변경 (`notelist/`)
+
+| 기능 | 위치 | 설명 |
+|------|------|------|
+| ⋮ 메뉴 | NoteListTopBar | MoreVert 아이콘 → DropdownMenu |
+| ChatGPT 분석 요청 | DropdownMenu | 전체 노트 대상 프롬프트 선택 → 공유 |
+| JSON 내보내기 | DropdownMenu | 전체 노트 JSON 파일 공유 |
+| 선택 내보내기 | 편집모드 TopBar | Share 아이콘 → 선택 노트 ChatGPT 공유 |
+| 프롬프트 선택 | BottomSheet | 3종 분석 유형 선택 UI |
+
+#### 5. ViewModel 확장 (`NoteListViewModel.kt`)
+- `ExportTarget` enum (ALL / SELECTED)
+- `showExportMenu` / `showPromptSelector` 상태 관리
+- `getNotesForExport()` — 대상에 따라 전체/선택 노트 반환
+
+---
+
+### 프로젝트 구조 변경
+
+```
+app/src/main/java/com/rnote/app/
+├── export/                          # [NEW] 내보내기 모듈
+│   ├── ExportModels.kt              # 데이터 모델, 매퍼, 프롬프트
+│   └── ExportHelper.kt              # JSON/텍스트 생성, Share Intent
+├── ui/notelist/
+│   ├── NoteListScreen.kt            # [MODIFIED] 메뉴, 프롬프트 시트 추가
+│   └── NoteListViewModel.kt         # [MODIFIED] 내보내기 상태 관리
+
+app/src/main/res/
+└── xml/file_paths.xml               # [NEW] FileProvider 경로 설정
+```
+
+---
+
+### 다음 버전 후보 작업
+
+- [ ] 주간/월간 감정 통계 화면
+- [ ] 노트 검색 기능
+- [ ] 다크 모드 지원
+- [ ] ChatGPT API 직접 연동 (앱 내 분석 결과 표시)
+- [ ] 한국어 키워드 자동 추출 (형태소 분석)

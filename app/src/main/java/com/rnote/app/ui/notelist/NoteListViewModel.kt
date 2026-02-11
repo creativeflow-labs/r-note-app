@@ -18,8 +18,13 @@ data class NoteListUiState(
     val notes: List<NoteEntity> = emptyList(),
     val groupedNotes: Map<String, List<NoteEntity>> = emptyMap(),
     val isEditMode: Boolean = false,
-    val selectedIds: Set<String> = emptySet()
+    val selectedIds: Set<String> = emptySet(),
+    val showExportMenu: Boolean = false,
+    val showPromptSelector: Boolean = false,
+    val exportTarget: ExportTarget = ExportTarget.ALL
 )
+
+enum class ExportTarget { ALL, SELECTED }
 
 class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
 
@@ -70,6 +75,32 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
             _uiState.update {
                 it.copy(isEditMode = false, selectedIds = emptySet())
             }
+        }
+    }
+
+    fun showExportMenu() {
+        _uiState.update { it.copy(showExportMenu = true) }
+    }
+
+    fun hideExportMenu() {
+        _uiState.update { it.copy(showExportMenu = false) }
+    }
+
+    fun requestChatGptExport(target: ExportTarget) {
+        _uiState.update {
+            it.copy(showExportMenu = false, showPromptSelector = true, exportTarget = target)
+        }
+    }
+
+    fun hidePromptSelector() {
+        _uiState.update { it.copy(showPromptSelector = false) }
+    }
+
+    fun getNotesForExport(): List<NoteEntity> {
+        val state = _uiState.value
+        return when (state.exportTarget) {
+            ExportTarget.ALL -> state.notes
+            ExportTarget.SELECTED -> state.notes.filter { it.id in state.selectedIds }
         }
     }
 

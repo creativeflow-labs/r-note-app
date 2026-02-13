@@ -66,6 +66,16 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
         }
     }
 
+    fun selectAll() {
+        _uiState.update {
+            it.copy(selectedIds = it.notes.map { note -> note.id }.toSet())
+        }
+    }
+
+    fun deselectAll() {
+        _uiState.update { it.copy(selectedIds = emptySet()) }
+    }
+
     fun deleteSelected() {
         viewModelScope.launch {
             val ids = _uiState.value.selectedIds.toList()

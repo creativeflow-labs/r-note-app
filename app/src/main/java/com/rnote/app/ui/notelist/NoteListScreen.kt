@@ -1,6 +1,9 @@
 package com.rnote.app.ui.notelist
 
+import android.app.Activity
 import android.content.Intent
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -41,6 +45,9 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,15 +77,30 @@ fun NoteListScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
+    // Double back press to exit
+    var lastBackPressTime by remember { mutableLongStateOf(0L) }
+    BackHandler {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastBackPressTime < 2000) {
+            (context as? Activity)?.finish()
+        } else {
+            lastBackPressTime = currentTime
+            Toast.makeText(context, "한 번 더 누르면 앱이 종료됩니다", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             NoteListTopBar(
                 isEditMode = uiState.isEditMode,
                 selectedCount = uiState.selectedIds.size,
+                totalCount = uiState.notes.size,
                 hasNotes = uiState.notes.isNotEmpty(),
                 showExportMenu = uiState.showExportMenu,
                 onToggleEditMode = { viewModel.toggleEditMode() },
+                onSelectAll = { viewModel.selectAll() },
+                onDeselectAll = { viewModel.deselectAll() },
                 onDelete = { viewModel.deleteSelected() },
                 onShowExportMenu = { viewModel.showExportMenu() },
                 onDismissExportMenu = { viewModel.hideExportMenu() },
@@ -167,9 +189,12 @@ fun NoteListScreen(
 private fun NoteListTopBar(
     isEditMode: Boolean,
     selectedCount: Int,
+    totalCount: Int,
     hasNotes: Boolean,
     showExportMenu: Boolean,
     onToggleEditMode: () -> Unit,
+    onSelectAll: () -> Unit,
+    onDeselectAll: () -> Unit,
     onDelete: () -> Unit,
     onShowExportMenu: () -> Unit,
     onDismissExportMenu: () -> Unit,
@@ -177,19 +202,37 @@ private fun NoteListTopBar(
     onExportJsonAll: () -> Unit,
     onExportChatGptSelected: () -> Unit
 ) {
+    val isAllSelected = selectedCount == totalCount && totalCount > 0
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .statusBarsPadding()
             .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = if (isEditMode) "${selectedCount}개 선택" else "R:note",
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = TextPrimary
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = if (isEditMode) "${selectedCount}개 선택" else "R:note",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary
+            )
+            if (isEditMode) {
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(
+                    onClick = { if (isAllSelected) onDeselectAll() else onSelectAll() }
+                ) {
+                    Text(
+                        text = if (isAllSelected) "전체해제" else "전체선택",
+                        fontSize = 13.sp,
+                        color = SagePrimary,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+        }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (isEditMode) {

@@ -11,24 +11,36 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class Emotion(
+data class EmotionLevel(
     val emoji: String,
-    val defaultScore: Int,
+    val score: Int,
+    val label: String,
     val sentiment: String
 )
 
-val EMOTIONS = listOf(
-    Emotion("\uD83D\uDE00", 70, "positive"),   // 😀
-    Emotion("\uD83D\uDE42", 50, "positive"),   // 🙂
-    Emotion("\uD83D\uDE10", 40, "neutral"),    // 😐
-    Emotion("\uD83D\uDE14", 30, "negative")    // 😔
+val EMOTION_SCALE = listOf(
+    EmotionLevel("\uD83D\uDE2D",   0, "Worst",      "negative"),  // 😭
+    EmotionLevel("\uD83D\uDE22",  10, "Terrible",   "negative"),  // 😢
+    EmotionLevel("\uD83D\uDE1E",  20, "Very Bad",   "negative"),  // 😞
+    EmotionLevel("\uD83D\uDE15",  30, "Bad",        "negative"),  // 😕
+    EmotionLevel("\uD83D\uDE41",  40, "A Bit Down", "neutral"),   // 🙁
+    EmotionLevel("\uD83D\uDE10",  50, "Neutral",    "neutral"),   // 😐
+    EmotionLevel("\uD83D\uDE42",  60, "A Bit Good", "positive"),  // 🙂
+    EmotionLevel("\uD83D\uDE0A",  70, "Good",       "positive"),  // 😊
+    EmotionLevel("\uD83D\uDE04",  80, "Very Good",  "positive"),  // 😄
+    EmotionLevel("\uD83D\uDE06",  90, "Great",      "positive"),  // 😆
+    EmotionLevel("\uD83E\uDD29", 100, "Amazing",    "positive")   // 🤩
 )
+
+fun findEmotionLevel(score: Int): EmotionLevel {
+    return EMOTION_SCALE.find { it.score == score } ?: EMOTION_SCALE[5]
+}
 
 data class NoteUiState(
     val id: String = "",
     val selectedEmoji: String = "\uD83D\uDE10",  // 😐
-    val emotionScore: Int = 40,
-    val emotionLabel: String = "",
+    val emotionScore: Int = 50,
+    val emotionLabel: String = "Neutral",
     val title: String = "",
     val body: String = "",
     val isSaving: Boolean = false,
@@ -81,36 +93,15 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
         }
     }
 
-    fun selectEmotion(emotion: Emotion) {
+    fun selectEmotionLevel(level: EmotionLevel) {
         _uiState.update {
             it.copy(
-                selectedEmoji = emotion.emoji,
-                emotionScore = emotion.defaultScore,
+                selectedEmoji = level.emoji,
+                emotionScore = level.score,
+                emotionLabel = level.label,
                 hasChanges = true
             )
         }
-    }
-
-    fun increaseScore() {
-        _uiState.update {
-            it.copy(
-                emotionScore = (it.emotionScore + 10).coerceAtMost(100),
-                hasChanges = true
-            )
-        }
-    }
-
-    fun decreaseScore() {
-        _uiState.update {
-            it.copy(
-                emotionScore = (it.emotionScore - 10).coerceAtLeast(0),
-                hasChanges = true
-            )
-        }
-    }
-
-    fun updateEmotionLabel(label: String) {
-        _uiState.update { it.copy(emotionLabel = label, hasChanges = true) }
     }
 
     fun updateTitle(title: String) {
@@ -171,11 +162,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     }
 
     private fun determineSentiment(score: Int): String {
-        return when {
-            score >= 60 -> "positive"
-            score >= 35 -> "neutral"
-            else -> "negative"
-        }
+        return findEmotionLevel(score).sentiment
     }
 
     class Factory(private val repository: NoteRepository) : ViewModelProvider.Factory {

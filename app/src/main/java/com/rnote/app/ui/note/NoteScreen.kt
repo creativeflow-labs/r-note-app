@@ -1,31 +1,30 @@
 package com.rnote.app.ui.note
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -45,14 +44,15 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.rnote.app.ui.theme.CardBackground
-import com.rnote.app.ui.theme.CloudDancerDark
 import com.rnote.app.ui.theme.DividerColor
 import com.rnote.app.ui.theme.SagePrimary
+import com.rnote.app.ui.theme.SurfaceWhite
 import com.rnote.app.ui.theme.TextHint
 import com.rnote.app.ui.theme.TextPrimary
 import com.rnote.app.ui.theme.TextSecondary
@@ -98,6 +98,7 @@ fun NoteScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.End
         ) {
@@ -125,10 +126,7 @@ fun NoteScreen(
                 selectedEmoji = uiState.selectedEmoji,
                 emotionScore = uiState.emotionScore,
                 emotionLabel = uiState.emotionLabel,
-                onEmojiSelected = { viewModel.selectEmotion(it) },
-                onIncreaseScore = { viewModel.increaseScore() },
-                onDecreaseScore = { viewModel.decreaseScore() },
-                onLabelChanged = { viewModel.updateEmotionLabel(it) }
+                onLevelSelected = { viewModel.selectEmotionLevel(it) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -218,16 +216,16 @@ fun NoteScreen(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun EmotionSection(
     selectedEmoji: String,
     emotionScore: Int,
     emotionLabel: String,
-    onEmojiSelected: (Emotion) -> Unit,
-    onIncreaseScore: () -> Unit,
-    onDecreaseScore: () -> Unit,
-    onLabelChanged: (String) -> Unit
+    onLevelSelected: (EmotionLevel) -> Unit
 ) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -235,59 +233,30 @@ private fun EmotionSection(
             .background(CardBackground)
             .padding(20.dp)
     ) {
-        // Emoji selection row
+        // Dual button row: [Emoji] — Score — [Label]
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            EMOTIONS.forEach { emotion ->
-                val isSelected = emotion.emoji == selectedEmoji
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(
-                            if (isSelected) SagePrimary.copy(alpha = 0.15f)
-                            else MaterialTheme.colorScheme.background
-                        )
-                        .border(
-                            width = if (isSelected) 2.dp else 1.dp,
-                            color = if (isSelected) SagePrimary else DividerColor,
-                            shape = CircleShape
-                        )
-                        .clickable { onEmojiSelected(emotion) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = emotion.emoji, fontSize = 28.sp)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Score control
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(
-                onClick = onDecreaseScore,
+            // Emoji button
+            Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(CloudDancerDark)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (isExpanded) SagePrimary.copy(alpha = 0.1f) else SurfaceWhite)
+                    .border(
+                        width = if (isExpanded) 1.5.dp else 1.dp,
+                        color = if (isExpanded) SagePrimary else DividerColor,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .clickable { isExpanded = !isExpanded }
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Remove,
-                    contentDescription = "감소",
-                    tint = TextSecondary,
-                    modifier = Modifier.size(18.dp)
-                )
+                Text(text = selectedEmoji, fontSize = 28.sp)
             }
 
-            Spacer(modifier = Modifier.width(20.dp))
-
+            // Score display
             Text(
                 text = "${emotionScore}%",
                 fontSize = 28.sp,
@@ -295,55 +264,76 @@ private fun EmotionSection(
                 color = SagePrimary
             )
 
-            Spacer(modifier = Modifier.width(20.dp))
-
-            IconButton(
-                onClick = onIncreaseScore,
+            // Label button
+            Box(
                 modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(CloudDancerDark)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(if (isExpanded) SagePrimary.copy(alpha = 0.1f) else SurfaceWhite)
+                    .border(
+                        width = if (isExpanded) 1.5.dp else 1.dp,
+                        color = if (isExpanded) SagePrimary else DividerColor,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .clickable { isExpanded = !isExpanded }
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = "증가",
-                    tint = TextSecondary,
-                    modifier = Modifier.size(18.dp)
+                Text(
+                    text = emotionLabel.ifEmpty { "Neutral" },
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Emotion label
-        BasicTextField(
-            value = emotionLabel,
-            onValueChange = onLabelChanged,
-            textStyle = TextStyle(
-                fontSize = 14.sp,
-                color = TextPrimary,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            ),
-            cursorBrush = SolidColor(SagePrimary),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            decorationBox = { innerTextField ->
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
+        // Expandable 11-level grid
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = expandVertically(),
+            exit = shrinkVertically()
+        ) {
+            Column(modifier = Modifier.padding(top = 16.dp)) {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (emotionLabel.isEmpty()) {
-                        Text(
-                            text = "한줄로 감정을 표현해보세요",
-                            fontSize = 14.sp,
-                            color = TextHint,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
+                    EMOTION_SCALE.forEach { level ->
+                        val isSelected = level.score == emotionScore
+                        Column(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    if (isSelected) SagePrimary.copy(alpha = 0.15f)
+                                    else SurfaceWhite
+                                )
+                                .border(
+                                    width = if (isSelected) 1.5.dp else 0.5.dp,
+                                    color = if (isSelected) SagePrimary else DividerColor,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .clickable {
+                                    onLevelSelected(level)
+                                    isExpanded = false
+                                }
+                                .padding(horizontal = 10.dp, vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = level.emoji, fontSize = 22.sp)
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = level.label,
+                                fontSize = 10.sp,
+                                color = if (isSelected) SagePrimary else TextSecondary,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
-                    innerTextField()
                 }
             }
-        )
+        }
     }
 }
 

@@ -180,3 +180,58 @@ app/src/main/res/
 - [ ] 다크 모드 지원
 - [ ] ChatGPT API 직접 연동 (앱 내 분석 결과 표시)
 - [ ] 한국어 키워드 자동 추출 (형태소 분석)
+
+---
+---
+
+## ver.0.2.1 — UX 개선 (감정 스케일, 전체선택, 시스템 UI)
+
+**작업일**: 2026.02.12
+**Git Tag**: `v0.2.1`
+
+---
+
+### 구현 완료 항목
+
+#### 1. 11단계 감정 스케일 (`NoteViewModel.kt`)
+- 기존 4단계 → 11단계 (0~100%, 10% 단위)
+- `EmotionLevel` 데이터 모델: emoji + score + English label + sentiment
+- 각 레벨에 확정된 sentiment 매핑 (negative/neutral/positive)
+- DB 스키마 변경 없음 (기존 필드 재활용)
+
+| Score | Emoji | Label | Sentiment |
+|-------|-------|-------|-----------|
+| 0% | 😭 | Worst | negative |
+| 10% | 😢 | Terrible | negative |
+| 20% | 😞 | Very Bad | negative |
+| 30% | 😕 | Bad | negative |
+| 40% | 🙁 | A Bit Down | neutral |
+| 50% | 😐 | Neutral | neutral |
+| 60% | 🙂 | A Bit Good | positive |
+| 70% | 😊 | Good | positive |
+| 80% | 😄 | Very Good | positive |
+| 90% | 😆 | Great | positive |
+| 100% | 🤩 | Amazing | positive |
+
+#### 2. 감정 선택 UI 재설계 (`NoteScreen.kt`)
+- 듀얼 버튼: [이모지] — 퍼센트 — [English Label]
+- 클릭 시 11개 옵션 FlowRow 그리드 확장 (애니메이션)
+- 옵션 선택 → emoji + score + label 동시 연동 → 자동 접힘
+- ±10% 수동 조절 버튼 제거
+- 한줄 감정 자유 텍스트 → 구조화된 English label 대체
+
+#### 3. 편집모드 전체선택 (`NoteListViewModel.kt` + `NoteListScreen.kt`)
+- 전체선택 / 전체해제 토글 TextButton
+- TopBar 좌측 "N개 선택" 옆에 배치
+- `selectAll()` / `deselectAll()` ViewModel 함수 추가
+
+#### 4. 시스템 상태바 영역 해결
+- `statusBarsPadding()` 적용: NoteScreen, NoteListScreen, OnboardingScreen
+- `navigationBarsPadding()` 적용: OnboardingScreen
+- SplashScreen: 전체 화면 센터 정렬이므로 별도 처리 불필요
+
+#### 5. 뒤로가기 2회 앱 종료 (`NoteListScreen.kt`)
+- `BackHandler` + `System.currentTimeMillis()` 비교
+- 첫 번째: Toast "한 번 더 누르면 앱이 종료됩니다"
+- 2초 이내 두 번째: `Activity.finish()` 호출
+- NoteListScreen에서만 동작 (NoteScreen은 기존 저장 확인 유지)

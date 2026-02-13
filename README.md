@@ -16,17 +16,18 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 
 ## Features
 
-**Emotion Recording**
-- 4 emotion emojis with auto-mapped percentage scores
-- +/- 10% manual adjustment
-- One-line emotion label (optional free text)
+**Emotion Recording** *(v0.2.1)*
+- 11-level emotion scale (0–100%) with emoji + English label
+- Dual-button selector: tap emoji or label to expand all 11 options
+- Structured sentiment mapping (negative / neutral / positive)
 - Title + body note editor
 
 **Note Management**
 - Note list grouped by date (descending)
-- Edit mode with multi-select deletion
+- Edit mode with multi-select deletion and select all
 - Floating action button for quick entry
 - Tap to edit existing notes
+- Double back press to exit app
 
 **ChatGPT Export & Analysis** *(v0.2)*
 - Share notes to ChatGPT app with auto-generated analysis prompts
@@ -107,6 +108,16 @@ git clone https://github.com/CrabAI/r-note-app.git
 ## Versioning
 
 This project follows [Semantic Versioning](https://semver.org/).
+
+### v0.2.1 — UX Improvements
+
+> Tag: [`v0.2.1`](https://github.com/CrabAI/r-note-app/releases/tag/v0.2.1) | Date: 2026.02.12
+
+- 11-level emotion scale (0–100%) replacing 4-emoji system
+- Dual-button emotion selector with expandable grid
+- Select all / deselect all in edit mode
+- Status bar overlap fix (statusBarsPadding)
+- Double back press to exit app
 
 ### v0.2.0 — ChatGPT Export & Analysis
 

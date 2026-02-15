@@ -7,19 +7,19 @@ val CloudDancer = Color(0xFFF0EDE5)
 val CloudDancerLight = Color(0xFFF7F5F0)
 val CloudDancerDark = Color(0xFFE8E4DB)
 
-// Primary - 차분한 세이지 그린
-val SagePrimary = Color(0xFF7C9A92)
-val SagePrimaryLight = Color(0xFFA3BDB5)
-val SagePrimaryDark = Color(0xFF5A7A72)
+// Primary - 차콜
+val SagePrimary = Color(0xFF2F2F2F)
+val SagePrimaryLight = Color(0xFF5A5A5A)
+val SagePrimaryDark = Color(0xFF1A1A1A)
 
 // Text
-val TextPrimary = Color(0xFF2D2D2D)
-val TextSecondary = Color(0xFF6B6B6B)
+val TextPrimary = Color(0xFF2F2F2F)
+val TextSecondary = Color(0xFF8C8A85)
 val TextHint = Color(0xFFAAAAAA)
 
 // Surface & Card
 val SurfaceWhite = Color(0xFFFFFFFF)
-val CardBackground = Color(0xFFFAF9F6)
+val CardBackground = Color(0xFFFFFFFF)
 
 // Accent
 val AccentWarm = Color(0xFFE8B89D)

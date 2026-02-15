@@ -19,7 +19,6 @@ data class NoteListUiState(
     val groupedNotes: Map<String, List<NoteEntity>> = emptyMap(),
     val isEditMode: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
-    val showExportMenu: Boolean = false,
     val showPromptSelector: Boolean = false,
     val exportTarget: ExportTarget = ExportTarget.ALL
 )
@@ -88,17 +87,9 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
         }
     }
 
-    fun showExportMenu() {
-        _uiState.update { it.copy(showExportMenu = true) }
-    }
-
-    fun hideExportMenu() {
-        _uiState.update { it.copy(showExportMenu = false) }
-    }
-
     fun requestChatGptExport(target: ExportTarget) {
         _uiState.update {
-            it.copy(showExportMenu = false, showPromptSelector = true, exportTarget = target)
+            it.copy(showPromptSelector = true, exportTarget = target)
         }
     }
 

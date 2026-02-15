@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rnote.app.ui.components.RNoteButton
 import com.rnote.app.ui.theme.SagePrimary
 import com.rnote.app.ui.theme.TextHint
 import com.rnote.app.ui.theme.TextSecondary
@@ -131,7 +129,8 @@ fun OnboardingScreen(onFinished: () -> Unit) {
         }
 
         // Bottom button
-        Button(
+        RNoteButton(
+            text = if (isLastPage) "시작하기" else "다음",
             onClick = {
                 if (isLastPage) {
                     onFinished()
@@ -144,16 +143,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 32.dp)
-                .height(52.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = SagePrimary)
-        ) {
-            Text(
-                text = if (isLastPage) "시작하기" else "다음",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+        )
     }
 }
 

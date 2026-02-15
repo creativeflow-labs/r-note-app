@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -21,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rnote.app.ui.theme.CardBackground
-import com.rnote.app.ui.theme.SagePrimary
 import com.rnote.app.ui.theme.TextSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,20 +62,11 @@ fun PermissionBottomSheet(
                 lineHeight = 22.sp
             )
             Spacer(modifier = Modifier.height(28.dp))
-            Button(
+            RNoteButton(
+                text = "허용하기",
                 onClick = onAllow,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = SagePrimary)
-            ) {
-                Text(
-                    text = "허용하기",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(onClick = onDeny) {
                 Text(

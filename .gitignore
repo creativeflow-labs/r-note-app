@@ -37,3 +37,8 @@ Thumbs.db
 *.env
 secrets/
 google-services.json
+
+# ===== Source Assets (작업용 원본) =====
+/font/
+/icon/
+/logo.png

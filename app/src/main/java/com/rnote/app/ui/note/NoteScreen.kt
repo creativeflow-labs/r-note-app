@@ -51,6 +51,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.rnote.app.ui.theme.CardBackground
 import com.rnote.app.ui.theme.DividerColor
+import com.rnote.app.ui.theme.HahmletStyle
 import com.rnote.app.ui.theme.SagePrimary
 import com.rnote.app.ui.theme.SurfaceWhite
 import com.rnote.app.ui.theme.TextHint
@@ -135,7 +136,7 @@ fun NoteScreen(
             BasicTextField(
                 value = uiState.title,
                 onValueChange = { viewModel.updateTitle(it) },
-                textStyle = TextStyle(
+                textStyle = HahmletStyle.copy(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextPrimary
@@ -147,10 +148,12 @@ fun NoteScreen(
                     Box {
                         if (uiState.title.isEmpty()) {
                             Text(
-                                text = "제목 (선택)",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextHint
+                                text = "제목",
+                                style = HahmletStyle.copy(
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = TextHint
+                                )
                             )
                         }
                         innerTextField()
@@ -174,7 +177,7 @@ fun NoteScreen(
             BasicTextField(
                 value = uiState.body,
                 onValueChange = { viewModel.updateBody(it) },
-                textStyle = TextStyle(
+                textStyle = HahmletStyle.copy(
                     fontSize = 16.sp,
                     color = TextPrimary,
                     lineHeight = 26.sp
@@ -187,10 +190,12 @@ fun NoteScreen(
                     Box {
                         if (uiState.body.isEmpty()) {
                             Text(
-                                text = "오늘의 감정을 자유롭게 적어보세요...",
-                                fontSize = 16.sp,
-                                color = TextHint,
-                                lineHeight = 26.sp
+                                text = "오늘의 감정과 생각을 자유롭게 적어보세요.",
+                                style = HahmletStyle.copy(
+                                    fontSize = 16.sp,
+                                    color = TextHint,
+                                    lineHeight = 26.sp
+                                )
                             )
                         }
                         innerTextField()

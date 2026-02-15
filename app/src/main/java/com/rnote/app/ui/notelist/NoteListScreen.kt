@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,14 +24,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -52,16 +47,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rnote.app.R
 import com.rnote.app.data.local.NoteEntity
 import com.rnote.app.export.ExportHelper
 import com.rnote.app.export.PromptType
 import com.rnote.app.ui.theme.AccentCoral
 import com.rnote.app.ui.theme.CardBackground
+import com.rnote.app.ui.theme.CloudDancer
+import com.rnote.app.ui.theme.HahmletStyle
 import com.rnote.app.ui.theme.SagePrimary
 import com.rnote.app.ui.theme.SurfaceWhite
 import com.rnote.app.ui.theme.TextHint
@@ -97,20 +96,12 @@ fun NoteListScreen(
                 selectedCount = uiState.selectedIds.size,
                 totalCount = uiState.notes.size,
                 hasNotes = uiState.notes.isNotEmpty(),
-                showExportMenu = uiState.showExportMenu,
                 onToggleEditMode = { viewModel.toggleEditMode() },
                 onSelectAll = { viewModel.selectAll() },
                 onDeselectAll = { viewModel.deselectAll() },
                 onDelete = { viewModel.deleteSelected() },
-                onShowExportMenu = { viewModel.showExportMenu() },
-                onDismissExportMenu = { viewModel.hideExportMenu() },
                 onExportChatGptAll = {
                     viewModel.requestChatGptExport(ExportTarget.ALL)
-                },
-                onExportJsonAll = {
-                    viewModel.hideExportMenu()
-                    val intent = ExportHelper.createJsonShareIntent(context, uiState.notes)
-                    context.startActivity(Intent.createChooser(intent, "JSON 내보내기"))
                 },
                 onExportChatGptSelected = {
                     viewModel.requestChatGptExport(ExportTarget.SELECTED)
@@ -122,10 +113,14 @@ fun NoteListScreen(
                 FloatingActionButton(
                     onClick = onNewNote,
                     containerColor = SagePrimary,
-                    contentColor = SurfaceWhite,
+                    contentColor = CloudDancer,
                     shape = CircleShape
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "새 노트 작성")
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pen_fill),
+                        contentDescription = "새 노트 작성",
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
@@ -191,15 +186,11 @@ private fun NoteListTopBar(
     selectedCount: Int,
     totalCount: Int,
     hasNotes: Boolean,
-    showExportMenu: Boolean,
     onToggleEditMode: () -> Unit,
     onSelectAll: () -> Unit,
     onDeselectAll: () -> Unit,
     onDelete: () -> Unit,
-    onShowExportMenu: () -> Unit,
-    onDismissExportMenu: () -> Unit,
     onExportChatGptAll: () -> Unit,
-    onExportJsonAll: () -> Unit,
     onExportChatGptSelected: () -> Unit
 ) {
     val isAllSelected = selectedCount == totalCount && totalCount > 0
@@ -213,13 +204,13 @@ private fun NoteListTopBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = if (isEditMode) "${selectedCount}개 선택" else "R:note",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
             if (isEditMode) {
+                Text(
+                    text = "${selectedCount}개 선택",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
                 Spacer(modifier = Modifier.width(8.dp))
                 TextButton(
                     onClick = { if (isAllSelected) onDeselectAll() else onSelectAll() }
@@ -231,6 +222,14 @@ private fun NoteListTopBar(
                         fontWeight = FontWeight.Medium
                     )
                 }
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "R:note",
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
             }
         }
 
@@ -239,9 +238,10 @@ private fun NoteListTopBar(
                 if (selectedCount > 0) {
                     IconButton(onClick = onExportChatGptSelected) {
                         Icon(
-                            Icons.Default.Share,
+                            painter = painterResource(id = R.drawable.ic_openai),
                             contentDescription = "선택 내보내기",
-                            tint = SagePrimary
+                            tint = SagePrimary,
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                     IconButton(onClick = onDelete) {
@@ -261,38 +261,21 @@ private fun NoteListTopBar(
                 }
             } else {
                 if (hasNotes) {
-                    Box {
-                        IconButton(onClick = onShowExportMenu) {
-                            Icon(
-                                Icons.Default.MoreVert,
-                                contentDescription = "메뉴",
-                                tint = TextSecondary
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = showExportMenu,
-                            onDismissRequest = onDismissExportMenu
-                        ) {
-                            DropdownMenuItem(
-                                text = {
-                                    Text("ChatGPT로 분석 요청", fontSize = 14.sp)
-                                },
-                                onClick = onExportChatGptAll
-                            )
-                            DropdownMenuItem(
-                                text = {
-                                    Text("JSON 파일로 내보내기", fontSize = 14.sp)
-                                },
-                                onClick = onExportJsonAll
-                            )
-                        }
+                    IconButton(onClick = onExportChatGptAll) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_openai),
+                            contentDescription = "ChatGPT 분석",
+                            tint = SagePrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
-                TextButton(onClick = onToggleEditMode) {
-                    Text(
-                        text = "편집",
-                        color = SagePrimary,
-                        fontWeight = FontWeight.Medium
+                IconButton(onClick = onToggleEditMode) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pencil_square),
+                        contentDescription = "편집",
+                        tint = SagePrimary,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
@@ -434,9 +417,10 @@ private fun NoteItem(
                 text = note.title.ifEmpty {
                     note.body.take(50).ifEmpty { "감정 기록" }
                 },
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium,
-                color = TextPrimary,
+                style = HahmletStyle.copy(
+                    fontSize = 15.sp,
+                    color = TextPrimary
+                ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

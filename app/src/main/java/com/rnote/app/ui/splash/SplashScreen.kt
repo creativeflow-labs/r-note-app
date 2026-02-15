@@ -2,15 +2,15 @@ package com.rnote.app.ui.splash
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,11 +20,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.rnote.app.ui.theme.SagePrimary
-import com.rnote.app.ui.theme.TextSecondary
+import com.rnote.app.R
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,18 +52,12 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.alpha(alphaAnim)
         ) {
-            Text(
-                text = "R",
-                fontSize = 64.sp,
-                fontWeight = FontWeight.Bold,
-                color = SagePrimary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "R:note",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                color = TextSecondary
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "R:note",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(RoundedCornerShape(24.dp))
             )
         }
     }

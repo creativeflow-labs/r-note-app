@@ -53,10 +53,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
 import com.rnote.app.R
 import com.rnote.app.data.local.NoteEntity
 import com.rnote.app.export.ExportHelper
 import com.rnote.app.export.PromptType
+import com.rnote.app.ui.note.findEmotionLevel
 import com.rnote.app.ui.theme.AccentCoral
 import com.rnote.app.ui.theme.CardBackground
 import com.rnote.app.ui.theme.CloudDancer
@@ -84,7 +86,7 @@ fun NoteListScreen(
             (context as? Activity)?.finish()
         } else {
             lastBackPressTime = currentTime
-            Toast.makeText(context, "한 번 더 누르면 앱이 종료됩니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.back_press_exit_toast), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -118,7 +120,7 @@ fun NoteListScreen(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_pen_fill),
-                        contentDescription = "새 노트 작성",
+                        contentDescription = stringResource(R.string.cd_new_note),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -172,8 +174,8 @@ fun NoteListScreen(
             onSelectPrompt = { promptType ->
                 viewModel.hidePromptSelector()
                 val notes = viewModel.getNotesForExport()
-                val intent = ExportHelper.createChatGptShareIntent(notes, promptType)
-                context.startActivity(Intent.createChooser(intent, "ChatGPT로 분석 요청"))
+                val intent = ExportHelper.createChatGptShareIntent(context, notes, promptType)
+                context.startActivity(Intent.createChooser(intent, context.getString(R.string.chatgpt_share_chooser)))
             },
             onDismiss = { viewModel.hidePromptSelector() }
         )
@@ -206,7 +208,7 @@ private fun NoteListTopBar(
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (isEditMode) {
                 Text(
-                    text = "${selectedCount}개 선택",
+                    text = stringResource(R.string.selected_count, selectedCount),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary
@@ -216,7 +218,7 @@ private fun NoteListTopBar(
                     onClick = { if (isAllSelected) onDeselectAll() else onSelectAll() }
                 ) {
                     Text(
-                        text = if (isAllSelected) "전체해제" else "전체선택",
+                        text = if (isAllSelected) stringResource(R.string.deselect_all) else stringResource(R.string.select_all),
                         fontSize = 13.sp,
                         color = SagePrimary,
                         fontWeight = FontWeight.Medium
@@ -239,7 +241,7 @@ private fun NoteListTopBar(
                     IconButton(onClick = onExportChatGptSelected) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_openai),
-                            contentDescription = "선택 내보내기",
+                            contentDescription = stringResource(R.string.cd_export_selected),
                             tint = SagePrimary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -247,14 +249,14 @@ private fun NoteListTopBar(
                     IconButton(onClick = onDelete) {
                         Icon(
                             Icons.Default.Delete,
-                            contentDescription = "삭제",
+                            contentDescription = stringResource(R.string.cd_delete),
                             tint = AccentCoral
                         )
                     }
                 }
                 TextButton(onClick = onToggleEditMode) {
                     Text(
-                        text = "완료",
+                        text = stringResource(R.string.done),
                         color = SagePrimary,
                         fontWeight = FontWeight.Medium
                     )
@@ -264,7 +266,7 @@ private fun NoteListTopBar(
                     IconButton(onClick = onExportChatGptAll) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_openai),
-                            contentDescription = "ChatGPT 분석",
+                            contentDescription = stringResource(R.string.cd_chatgpt_analysis),
                             tint = SagePrimary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -273,7 +275,7 @@ private fun NoteListTopBar(
                 IconButton(onClick = onToggleEditMode) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_pencil_square),
-                        contentDescription = "편집",
+                        contentDescription = stringResource(R.string.cd_edit),
                         tint = SagePrimary,
                         modifier = Modifier.size(20.dp)
                     )
@@ -302,14 +304,14 @@ private fun PromptSelectorBottomSheet(
                 .padding(bottom = 32.dp)
         ) {
             Text(
-                text = "ChatGPT에서 어떤 분석을 원하시나요?",
+                text = stringResource(R.string.prompt_selector_title),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "선택한 분석 유형에 맞는 프롬프트가 자동으로 포함됩니다",
+                text = stringResource(R.string.prompt_selector_desc),
                 fontSize = 13.sp,
                 color = TextSecondary
             )
@@ -331,12 +333,6 @@ private fun PromptOption(
     promptType: PromptType,
     onClick: () -> Unit
 ) {
-    val (emoji, description) = when (promptType) {
-        PromptType.EMOTION_ANALYSIS -> "\uD83D\uDCC8" to "감정 흐름, 트리거, 변화 추이를 분석합니다"
-        PromptType.WEEKLY_REPORT -> "\uD83D\uDCCB" to "주간/월간 요약 리포트를 생성합니다"
-        PromptType.COUNSELING -> "\uD83D\uDCAC" to "따뜻한 심리 상담 관점으로 조언합니다"
-    }
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -346,18 +342,18 @@ private fun PromptOption(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = emoji, fontSize = 24.sp)
+        Text(text = promptType.emoji, fontSize = 24.sp)
         Spacer(modifier = Modifier.width(14.dp))
         Column {
             Text(
-                text = promptType.label,
+                text = stringResource(promptType.labelRes),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
                 color = TextPrimary
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = description,
+                text = stringResource(promptType.descRes),
                 fontSize = 12.sp,
                 color = TextSecondary
             )
@@ -415,7 +411,7 @@ private fun NoteItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = note.title.ifEmpty {
-                    note.body.take(50).ifEmpty { "감정 기록" }
+                    note.body.take(50).ifEmpty { stringResource(R.string.empty_note_fallback) }
                 },
                 style = HahmletStyle.copy(
                     fontSize = 15.sp,
@@ -427,7 +423,7 @@ private fun NoteItem(
             if (note.emotionLabel.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = note.emotionLabel,
+                    text = stringResource(findEmotionLevel(note.emotionScore).labelRes),
                     fontSize = 13.sp,
                     color = TextSecondary,
                     maxLines = 1,
@@ -451,14 +447,14 @@ private fun EmptyState(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "아직 기록이 없어요",
+            text = stringResource(R.string.empty_state_title),
             fontSize = 18.sp,
             fontWeight = FontWeight.Medium,
             color = TextPrimary
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "오른쪽 아래 버튼을 눌러\n첫 번째 감정을 기록해보세요",
+            text = stringResource(R.string.empty_state_desc),
             fontSize = 14.sp,
             color = TextSecondary,
             lineHeight = 22.sp,

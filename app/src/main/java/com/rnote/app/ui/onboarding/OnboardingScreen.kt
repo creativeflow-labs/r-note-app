@@ -30,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.rnote.app.R
 import com.rnote.app.ui.components.RNoteButton
 import com.rnote.app.ui.theme.SagePrimary
 import com.rnote.app.ui.theme.TextHint
@@ -38,30 +40,30 @@ import kotlinx.coroutines.launch
 
 data class OnboardingPage(
     val emoji: String,
-    val title: String,
-    val description: String
+    @androidx.annotation.StringRes val titleRes: Int,
+    @androidx.annotation.StringRes val descRes: Int
 )
 
 private val onboardingPages = listOf(
     OnboardingPage(
         emoji = "\uD83D\uDCDD",  // 📝
-        title = "감정을 기록하세요",
-        description = "매일의 감정을 간단하게 기록하고\n나만의 감정 일기를 만들어보세요"
+        titleRes = R.string.onboarding_title_1,
+        descRes = R.string.onboarding_desc_1
     ),
     OnboardingPage(
         emoji = "\uD83D\uDE0A\uD83D\uDE14\uD83D\uDE10",  // 😊😔😐
-        title = "이모지로 표현하세요",
-        description = "복잡한 감정도 이모지 하나로\n쉽고 직관적으로 표현할 수 있어요"
+        titleRes = R.string.onboarding_title_2,
+        descRes = R.string.onboarding_desc_2
     ),
     OnboardingPage(
         emoji = "\uD83D\uDD12",  // 🔒
-        title = "안전하게 보관돼요",
-        description = "모든 데이터는 기기에 안전하게 저장되며\n오직 나만 볼 수 있어요"
+        titleRes = R.string.onboarding_title_3,
+        descRes = R.string.onboarding_desc_3
     ),
     OnboardingPage(
         emoji = "\uD83D\uDCC2",  // 📂
-        title = "기록을 지켜드려요",
-        description = "기록을 안전하게 보관하고\n나중에 분석하기 위해\n저장 권한이 필요합니다"
+        titleRes = R.string.onboarding_title_4,
+        descRes = R.string.onboarding_desc_4
     )
 )
 
@@ -90,7 +92,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
             if (!isLastPage) {
                 TextButton(onClick = onFinished) {
                     Text(
-                        text = "건너뛰기",
+                        text = stringResource(R.string.skip),
                         color = TextSecondary,
                         fontSize = 14.sp
                     )
@@ -130,7 +132,7 @@ fun OnboardingScreen(onFinished: () -> Unit) {
 
         // Bottom button
         RNoteButton(
-            text = if (isLastPage) "시작하기" else "다음",
+            text = if (isLastPage) stringResource(R.string.get_started) else stringResource(R.string.next),
             onClick = {
                 if (isLastPage) {
                     onFinished()
@@ -160,7 +162,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
-            text = page.title,
+            text = stringResource(page.titleRes),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -168,7 +170,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = page.description,
+            text = stringResource(page.descRes),
             fontSize = 16.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center,

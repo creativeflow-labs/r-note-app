@@ -1,4 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">R:Note</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Record Your Emotions</string>
+    <string name="onboarding_desc_1">Record your daily emotions\nand create your own emotion diary</string>
+    <string name="onboarding_title_2">Express with Emojis</string>
+    <string name="onboarding_desc_2">Express even complex emotions\neasily and intuitively with emojis</string>
+    <string name="onboarding_title_3">Safely Stored</string>
+    <string name="onboarding_desc_3">All data is safely stored on your device\nand only you can see it</string>
+    <string name="onboarding_title_4">We Protect Your Records</string>
+    <string name="onboarding_desc_4">To safely store and analyze\nyour records later,\nstorage permission is needed</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+
+    <!-- Permission -->
+    <string name="permission_title">Storage Permission Required</string>
+    <string name="permission_desc">Storage access is needed\nto safely backup and export your records</string>
+    <string name="allow">Allow</string>
+    <string name="later">Maybe Later</string>
+
+    <!-- Note Screen -->
+    <string name="save">Save</string>
+    <string name="saving">Saving…</string>
+    <string name="title_placeholder">Title</string>
+    <string name="body_placeholder">Freely write about your emotions and thoughts today.</string>
+    <string name="exit_confirm_title">Leave without saving?</string>
+    <string name="exit_confirm_desc">Your work in progress will be lost</string>
+    <string name="leave">Leave</string>
+    <string name="save_and_leave">Save &amp; Leave</string>
+
+    <!-- Note List Screen -->
+    <string name="back_press_exit_toast">Press back again to exit</string>
+    <string name="cd_new_note">New note</string>
+    <string name="selected_count">%d selected</string>
+    <string name="deselect_all">Deselect All</string>
+    <string name="select_all">Select All</string>
+    <string name="cd_export_selected">Export selected</string>
+    <string name="cd_delete">Delete</string>
+    <string name="done">Done</string>
+    <string name="cd_chatgpt_analysis">ChatGPT Analysis</string>
+    <string name="cd_edit">Edit</string>
+    <string name="empty_note_fallback">Emotion record</string>
+    <string name="empty_state_title">No records yet</string>
+    <string name="empty_state_desc">Tap the button on the bottom right\nto record your first emotion</string>
+
+    <!-- Prompt Selector -->
+    <string name="prompt_selector_title">What analysis would you like from ChatGPT?</string>
+    <string name="prompt_selector_desc">A prompt matching the selected analysis type will be automatically included</string>
+    <string name="chatgpt_share_chooser">Request analysis via ChatGPT</string>
+
+    <!-- Prompt Types -->
+    <string name="prompt_emotion_label">Emotion Pattern Analysis</string>
+    <string name="prompt_emotion_desc">Analyzes emotion flow, triggers, and trends</string>
+    <string name="prompt_emotion_analysis">Below is emotion journal data exported from the R:Note app.\nPlease analyze the following based on this data:\n1. Overall emotion flow and patterns (upward/downward trends, volatility)\n2. Recurring emotional triggers or situations\n3. Ratio and trends of positive/negative emotions\n4. Specific suggestions for mental well-being</string>
+
+    <string name="prompt_weekly_label">Weekly/Monthly Report</string>
+    <string name="prompt_weekly_desc">Generates weekly/monthly summary reports</string>
+    <string name="prompt_weekly_report">Below is emotion journal data exported from the R:Note app.\nPlease create a weekly/monthly report based on this data:\n1. Weekly average emotion scores and changes\n2. The best and hardest days\n3. Overall emotion summary for the period\n4. Recommended activities for the next period</string>
+
+    <string name="prompt_counseling_label">Comprehensive Counseling</string>
+    <string name="prompt_counseling_desc">Advises from a warm counseling perspective</string>
+    <string name="prompt_counseling">Below is emotion journal data exported from the R:Note app.\nFrom a counselor\'s perspective, please analyze and advise on the following:\n1. Key emotion patterns revealed in the records\n2. Analysis of potential stress factors\n3. Practical strategies for emotional regulation\n4. Encouragement for areas of positive growth\nPlease respond in a warm and empathetic tone.</string>
+
+    <!-- Export Labels -->
+    <string name="export_json_subject">R:Note Emotion Records</string>
+    <string name="export_chatgpt_subject">R:Note Emotion Analysis Request</string>
+    <string name="export_data_summary">[Data Summary]</string>
+    <string name="export_period">Period: %1$s ~ %2$s</string>
+    <string name="export_total_notes">Total records: %d</string>
+    <string name="export_avg_score">Average emotion score: %d%%</string>
+    <string name="export_sentiment_dist">Sentiment: Positive %1$d / Neutral %2$d / Negative %3$d</string>
+    <string name="export_emotion_flow">[Emotion Flow]</string>
+    <string name="export_detail_records">[Detailed Records]</string>
+    <string name="export_emotion_label">Emotion: %s</string>
+    <string name="export_title_label">Title: %s</string>
+
+    <!-- Emotion Labels -->
+    <string name="emotion_worst">Worst</string>
+    <string name="emotion_terrible">Terrible</string>
+    <string name="emotion_very_bad">Very Bad</string>
+    <string name="emotion_bad">Bad</string>
+    <string name="emotion_a_bit_down">A Bit Down</string>
+    <string name="emotion_neutral">Neutral</string>
+    <string name="emotion_a_bit_good">A Bit Good</string>
+    <string name="emotion_good">Good</string>
+    <string name="emotion_very_good">Very Good</string>
+    <string name="emotion_great">Great</string>
+    <string name="emotion_amazing">Amazing</string>
 </resources>

@@ -1,8 +1,10 @@
 package com.rnote.app.ui.note
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.rnote.app.R
 import com.rnote.app.data.local.NoteEntity
 import com.rnote.app.data.repository.NoteRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,22 +16,23 @@ import kotlinx.coroutines.launch
 data class EmotionLevel(
     val emoji: String,
     val score: Int,
-    val label: String,
+    val labelKey: String,
+    @StringRes val labelRes: Int,
     val sentiment: String
 )
 
 val EMOTION_SCALE = listOf(
-    EmotionLevel("\uD83D\uDE2D",   0, "Worst",      "negative"),  // 😭
-    EmotionLevel("\uD83D\uDE22",  10, "Terrible",   "negative"),  // 😢
-    EmotionLevel("\uD83D\uDE1E",  20, "Very Bad",   "negative"),  // 😞
-    EmotionLevel("\uD83D\uDE15",  30, "Bad",        "negative"),  // 😕
-    EmotionLevel("\uD83D\uDE41",  40, "A Bit Down", "neutral"),   // 🙁
-    EmotionLevel("\uD83D\uDE10",  50, "Neutral",    "neutral"),   // 😐
-    EmotionLevel("\uD83D\uDE42",  60, "A Bit Good", "positive"),  // 🙂
-    EmotionLevel("\uD83D\uDE0A",  70, "Good",       "positive"),  // 😊
-    EmotionLevel("\uD83D\uDE04",  80, "Very Good",  "positive"),  // 😄
-    EmotionLevel("\uD83D\uDE06",  90, "Great",      "positive"),  // 😆
-    EmotionLevel("\uD83E\uDD29", 100, "Amazing",    "positive")   // 🤩
+    EmotionLevel("\uD83D\uDE2D",   0, "Worst",      R.string.emotion_worst,        "negative"),  // 😭
+    EmotionLevel("\uD83D\uDE22",  10, "Terrible",   R.string.emotion_terrible,     "negative"),  // 😢
+    EmotionLevel("\uD83D\uDE1E",  20, "Very Bad",   R.string.emotion_very_bad,     "negative"),  // 😞
+    EmotionLevel("\uD83D\uDE15",  30, "Bad",        R.string.emotion_bad,          "negative"),  // 😕
+    EmotionLevel("\uD83D\uDE41",  40, "A Bit Down", R.string.emotion_a_bit_down,   "neutral"),   // 🙁
+    EmotionLevel("\uD83D\uDE10",  50, "Neutral",    R.string.emotion_neutral,      "neutral"),   // 😐
+    EmotionLevel("\uD83D\uDE42",  60, "A Bit Good", R.string.emotion_a_bit_good,   "positive"),  // 🙂
+    EmotionLevel("\uD83D\uDE0A",  70, "Good",       R.string.emotion_good,         "positive"),  // 😊
+    EmotionLevel("\uD83D\uDE04",  80, "Very Good",  R.string.emotion_very_good,    "positive"),  // 😄
+    EmotionLevel("\uD83D\uDE06",  90, "Great",      R.string.emotion_great,        "positive"),  // 😆
+    EmotionLevel("\uD83E\uDD29", 100, "Amazing",    R.string.emotion_amazing,      "positive")   // 🤩
 )
 
 fun findEmotionLevel(score: Int): EmotionLevel {
@@ -98,7 +101,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
             it.copy(
                 selectedEmoji = level.emoji,
                 emotionScore = level.score,
-                emotionLabel = level.label,
+                emotionLabel = level.labelKey,
                 hasChanges = true
             )
         }

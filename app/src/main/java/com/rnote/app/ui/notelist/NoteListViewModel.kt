@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -30,7 +30,7 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(NoteListUiState())
     val uiState: StateFlow<NoteListUiState> = _uiState.asStateFlow()
 
-    private val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    private val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
 
     init {
         viewModelScope.launch {

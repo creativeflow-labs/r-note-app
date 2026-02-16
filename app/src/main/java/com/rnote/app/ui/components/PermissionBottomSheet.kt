@@ -18,6 +18,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.res.stringResource
+import com.rnote.app.R
 import com.rnote.app.ui.theme.CardBackground
 import com.rnote.app.ui.theme.TextSecondary
 
@@ -48,14 +50,14 @@ fun PermissionBottomSheet(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "저장 권한이 필요해요",
+                text = stringResource(R.string.permission_title),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "기록을 안전하게 백업하고\n내보내기 위해 저장소 접근 권한이 필요합니다",
+                text = stringResource(R.string.permission_desc),
                 fontSize = 14.sp,
                 color = TextSecondary,
                 textAlign = TextAlign.Center,
@@ -63,14 +65,14 @@ fun PermissionBottomSheet(
             )
             Spacer(modifier = Modifier.height(28.dp))
             RNoteButton(
-                text = "허용하기",
+                text = stringResource(R.string.allow),
                 onClick = onAllow,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             TextButton(onClick = onDeny) {
                 Text(
-                    text = "나중에 할게요",
+                    text = stringResource(R.string.later),
                     fontSize = 14.sp,
                     color = TextSecondary
                 )

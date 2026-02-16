@@ -49,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.compose.ui.res.stringResource
+import com.rnote.app.R
 import com.rnote.app.ui.theme.CardBackground
 import com.rnote.app.ui.theme.DividerColor
 import com.rnote.app.ui.theme.HahmletStyle
@@ -108,7 +110,7 @@ fun NoteScreen(
                 enabled = !uiState.isSaving
             ) {
                 Text(
-                    text = if (uiState.isSaving) "저장 중..." else "저장",
+                    text = if (uiState.isSaving) stringResource(R.string.saving) else stringResource(R.string.save),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = if (uiState.isSaving) TextHint else SagePrimary
@@ -148,7 +150,7 @@ fun NoteScreen(
                     Box {
                         if (uiState.title.isEmpty()) {
                             Text(
-                                text = "제목",
+                                text = stringResource(R.string.title_placeholder),
                                 style = HahmletStyle.copy(
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -190,7 +192,7 @@ fun NoteScreen(
                     Box {
                         if (uiState.body.isEmpty()) {
                             Text(
-                                text = "오늘의 감정과 생각을 자유롭게 적어보세요.",
+                                text = stringResource(R.string.body_placeholder),
                                 style = HahmletStyle.copy(
                                     fontSize = 16.sp,
                                     color = TextHint,
@@ -284,7 +286,7 @@ private fun EmotionSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = emotionLabel.ifEmpty { "Neutral" },
+                    text = stringResource(findEmotionLevel(emotionScore).labelRes),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
                     color = TextPrimary
@@ -328,7 +330,7 @@ private fun EmotionSection(
                             Text(text = level.emoji, fontSize = 22.sp)
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = level.label,
+                                text = stringResource(level.labelRes),
                                 fontSize = 10.sp,
                                 color = if (isSelected) SagePrimary else TextSecondary,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
@@ -363,13 +365,13 @@ private fun ExitConfirmBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "저장하지 않고 나가시겠습니까?",
+                text = stringResource(R.string.exit_confirm_title),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "작성 중인 내용이 사라집니다",
+                text = stringResource(R.string.exit_confirm_desc),
                 fontSize = 14.sp,
                 color = TextSecondary
             )
@@ -383,7 +385,7 @@ private fun ExitConfirmBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "나가기",
+                        text = stringResource(R.string.leave),
                         color = TextSecondary,
                         fontSize = 16.sp
                     )
@@ -393,7 +395,7 @@ private fun ExitConfirmBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "저장하고 나가기",
+                        text = stringResource(R.string.save_and_leave),
                         color = SagePrimary,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp

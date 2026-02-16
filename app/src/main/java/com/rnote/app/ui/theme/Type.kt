@@ -13,8 +13,11 @@ val HahmletFont = FontFamily(
     Font(R.font.hahmlet, FontWeight.Medium)
 )
 
+// App font: swap this for locale-specific fonts (e.g. Japanese, Spanish)
+val AppFont: FontFamily = HahmletFont
+
 val HahmletStyle = TextStyle(
-    fontFamily = HahmletFont,
+    fontFamily = AppFont,
     fontWeight = FontWeight.Medium,
     letterSpacing = (-0.02).em
 )

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import com.google.gson.GsonBuilder
+import com.rnote.app.R
 import com.rnote.app.data.local.NoteEntity
 import java.io.File
 import java.text.SimpleDateFormat
@@ -31,18 +32,18 @@ object ExportHelper {
         return Intent(Intent.ACTION_SEND).apply {
             type = "application/json"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, "R:Note 감정 기록 데이터")
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.export_json_subject))
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }
 
-    fun createChatGptShareIntent(notes: List<NoteEntity>, promptType: PromptType): Intent {
-        val text = ExportMapper.toShareText(notes, promptType)
+    fun createChatGptShareIntent(context: Context, notes: List<NoteEntity>, promptType: PromptType): Intent {
+        val text = ExportMapper.toShareText(context, notes, promptType)
 
         return Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)
-            putExtra(Intent.EXTRA_SUBJECT, "R:Note 감정 분석 요청")
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.export_chatgpt_subject))
         }
     }
 }

@@ -348,6 +348,90 @@ app/src/main/res/
 | 시스템 스플래시 로고 중복 | Android 12+ 자동 스플래시 + Compose 스플래시 이중 표시 | values-v31 테마에서 시스템 스플래시 아이콘 투명 처리 |
 
 ---
+---
+
+## ver.0.3.0 — 다국어 지원 (i18n): 영어 기본 + 한국어 지원
+
+**작업일**: 2026.02.12
+**Git Tag**: `v0.3.0`
+**Branch**: `feature/i18n-support`
+
+---
+
+### 구현 완료 항목
+
+#### 1. String Resource 분리 (`res/values/`, `res/values-ko/`)
+- 영어(default) `strings.xml` — ~70개 문자열
+- 한국어 `values-ko/strings.xml` — ~70개 번역
+- 카테고리별 체계 구성: Onboarding, Permission, Note, NoteList, Prompt, Export, Emotion
+- Format string 파라미터 정합성 유지 (`%d`, `%1$s ~ %2$s`, `%d%%`)
+- 기기 언어 설정에 따라 자동 전환
+
+#### 2. PromptType enum 리팩토링 (`export/ExportModels.kt`)
+- `PromptType(label: String, prompt: String)` → `PromptType(@StringRes labelRes, @StringRes promptRes, @StringRes descRes, emoji: String)`
+- emoji/description을 enum 필드로 통합 (기존 NoteListScreen의 PromptOption when 블록 제거)
+- ChatGPT 프롬프트 영문 default → 글로벌 AI 응답 품질 최적화
+- Export version: "0.2.0" → "0.3.0"
+
+#### 3. Export 레이어 Context 전달 (`export/`)
+- `ExportMapper.toShareText()` — Context 파라미터 추가
+- `ExportHelper.createChatGptShareIntent()` — Context 첫 번째 파라미터 추가
+- 내보내기 텍스트 내 데이터 레이블 전체 리소스화 (기간, 총 기록, 평균 점수, 감정 분포 등)
+
+#### 4. EmotionLevel 이중 레이블 구조 (`ui/note/NoteViewModel.kt`)
+- `EmotionLevel.label` → `labelKey` (영문, DB 저장용) + `labelRes` (@StringRes, UI 표시용)
+- DB에는 영어 레이블 유지 → ChatGPT 내보내기 호환성 보장
+- UI에서는 `stringResource(level.labelRes)` → 기기 locale에 따라 번역 표시
+
+#### 5. 전 화면 stringResource() 교체
+
+| 화면 | 파일 | 교체 문자열 수 |
+|------|------|---------------|
+| NoteListScreen | `NoteListScreen.kt` | 20개 (Toast, 버튼, content description, 빈 상태, 프롬프트 셀렉터) |
+| NoteScreen | `NoteScreen.kt` | 8개 (저장 버튼, placeholder, 종료 확인 다이얼로그) |
+| OnboardingScreen | `OnboardingScreen.kt` | 12개 (4페이지 title/desc, 건너뛰기/다음/시작하기) |
+| PermissionBottomSheet | `PermissionBottomSheet.kt` | 4개 (제목, 설명, 허용, 나중에) |
+
+#### 6. 날짜 포맷 locale 자동 대응 (`ui/notelist/NoteListViewModel.kt`)
+- `SimpleDateFormat("yyyy.MM.dd")` → `DateFormat.getDateInstance(DateFormat.MEDIUM)`
+- EN: "Feb 12, 2026" / KO: "2026. 2. 12."
+- 시스템 locale에 따라 자동 포맷 전환
+
+#### 7. 폰트 구조 확장 준비 (`ui/theme/Type.kt`)
+- `AppFont` 변수 분리 (현재 HahmletFont 할당)
+- 향후 일본어/스페인어 등 locale별 폰트 교체 진입점 마련
+
+---
+
+### 수정 파일 목록 (11개)
+
+```
+res/values/strings.xml              # [EXPANDED] English default ~70개
+res/values-ko/strings.xml           # [NEW] Korean translations ~70개
+export/ExportModels.kt              # [MODIFIED] PromptType @StringRes, toShareText Context
+export/ExportHelper.kt              # [MODIFIED] createChatGptShareIntent Context
+ui/note/NoteViewModel.kt            # [MODIFIED] EmotionLevel labelKey + labelRes
+ui/note/NoteScreen.kt               # [MODIFIED] stringResource() 교체
+ui/notelist/NoteListScreen.kt       # [MODIFIED] stringResource() 교체
+ui/notelist/NoteListViewModel.kt    # [MODIFIED] DateFormat.MEDIUM locale 대응
+ui/onboarding/OnboardingScreen.kt   # [MODIFIED] OnboardingPage @StringRes
+ui/components/PermissionBottomSheet.kt # [MODIFIED] stringResource() 교체
+ui/theme/Type.kt                    # [MODIFIED] AppFont 변수 분리
+```
+
+---
+
+### 설계 결정 사항
+
+| 항목 | 결정 | 근거 |
+|------|------|------|
+| DB 감정 레이블 | 영문 유지 (labelKey) | ChatGPT 내보내기 호환성, 언어 독립 데이터 |
+| ChatGPT 프롬프트 | 영문 default | AI 응답 품질 최적화, GPT Store 글로벌 타겟 |
+| 폰트 | Hahmlet 유지 (Latin+한글 지원) | 추가 폰트 없이 영어/한국어 모두 대응 |
+| 날짜 포맷 | `DateFormat.MEDIUM` | Context 의존 없이 ViewModel에서 locale 대응 |
+| 향후 언어 확장 | `values-{locale}/strings.xml` 추가만으로 가능 | Android 네이티브 i18n 구조 활용 |
+
+---
 
 ### 다음 버전 후보 작업
 
@@ -355,4 +439,4 @@ app/src/main/res/
 - [ ] 노트 검색 기능
 - [ ] 다크 모드 지원
 - [ ] ChatGPT API 직접 연동 (앱 내 분석 결과 표시)
-- [ ] 한국어 키워드 자동 추출 (형태소 분석)
+- [ ] 일본어/스페인어 추가 지원

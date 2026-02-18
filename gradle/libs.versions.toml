@@ -10,6 +10,7 @@ room = "2.7.1"
 datastore = "1.1.1"
 ksp = "2.3.5"
 gson = "2.11.0"
+play-services-ads = "24.3.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -35,6 +36,8 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "play-services-ads" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

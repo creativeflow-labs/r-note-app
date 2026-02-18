@@ -58,6 +58,7 @@ import com.rnote.app.R
 import com.rnote.app.data.local.NoteEntity
 import com.rnote.app.export.ExportHelper
 import com.rnote.app.export.PromptType
+import com.rnote.app.ui.components.BannerAd
 import com.rnote.app.ui.note.findEmotionLevel
 import com.rnote.app.ui.theme.AccentCoral
 import com.rnote.app.ui.theme.CardBackground
@@ -92,6 +93,7 @@ fun NoteListScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        bottomBar = { BannerAd() },
         topBar = {
             NoteListTopBar(
                 isEditMode = uiState.isEditMode,

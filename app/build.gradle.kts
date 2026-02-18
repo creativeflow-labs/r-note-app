@@ -76,5 +76,7 @@ dependencies {
     implementation(libs.datastore.preferences)
     implementation(libs.gson)
 
+    implementation(libs.play.services.ads)
+
     debugImplementation(libs.compose.ui.tooling)
 }

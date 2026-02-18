@@ -89,4 +89,8 @@
     <string name="emotion_very_good">Very Good</string>
     <string name="emotion_great">Great</string>
     <string name="emotion_amazing">Amazing</string>
+
+    <!-- AdMob (not localized) -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-6816394622305612~5023364294</string>
+    <string name="admob_banner_unit_id" translatable="false">ca-app-pub-6816394622305612/7295573330</string>
 </resources>

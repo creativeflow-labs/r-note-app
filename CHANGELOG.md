@@ -440,3 +440,87 @@ ui/theme/Type.kt                    # [MODIFIED] AppFont 변수 분리
 - [ ] 다크 모드 지원
 - [ ] ChatGPT API 직접 연동 (앱 내 분석 결과 표시)
 - [ ] 일본어/스페인어 추가 지원
+
+---
+---
+
+## ver.1.0.0 — Google AdMob 하단 배너 광고
+
+**작업일**: 2026.02.17
+**Git Tag**: `v1.0.0`
+**Branch**: `feature/admob-banner`
+
+---
+
+### 구현 완료 항목
+
+#### 1. 의존성 추가 (`gradle/libs.versions.toml`, `app/build.gradle.kts`)
+- `play-services-ads:24.3.0` 버전 카탈로그 등록 및 app 모듈 implementation 추가
+
+#### 2. AndroidManifest 설정 (`AndroidManifest.xml`)
+- `com.google.android.gms.ads.APPLICATION_ID` meta-data 추가
+- AdMob App ID: `ca-app-pub-6816394622305612~5023364294`
+- INTERNET 권한은 SDK 자동 병합으로 별도 추가 불필요
+
+#### 3. MobileAds SDK 초기화 (`RNoteApplication.kt`)
+- `onCreate()`에서 `MobileAds.initialize(this)` 비동기 호출
+- 메인 스레드 블로킹 없음
+
+#### 4. 광고 ID 리소스 관리 (`res/values/strings.xml`)
+- `admob_app_id`, `admob_banner_unit_id` — `translatable="false"`로 다국어 제외
+- 프로덕션 배너 단위 ID: `ca-app-pub-6816394622305612/7295573330`
+
+#### 5. BannerAd 컴포저블 (`ui/components/BannerAd.kt`) — [NEW]
+- `AndroidView`로 `AdView` 래핑 (Compose에서 AdMob 사용 표준 방식)
+- `AdSize.BANNER` (320×50) — 가장 작은 비침해적 포맷
+- `fillMaxWidth()` + string resource에서 광고 단위 ID 로드
+- `navigationBarsPadding()` 적용 — edge-to-edge 환경 대응
+
+#### 6. NoteListScreen 배너 삽입 (`ui/notelist/NoteListScreen.kt`)
+- Scaffold `bottomBar = { BannerAd() }` 추가
+- 노트 리스트(메인 화면)에만 광고 노출, 노트 작성/편집 화면은 광고 없음
+- Scaffold가 자동으로 paddingValues에 배너 높이 포함 → 콘텐츠 겹침 없음
+
+---
+
+### 수정 파일 목록 (7개)
+
+```
+gradle/libs.versions.toml              # [MODIFIED] play-services-ads 추가
+app/build.gradle.kts                   # [MODIFIED] implementation 추가
+app/src/main/AndroidManifest.xml       # [MODIFIED] AdMob App ID meta-data
+app/src/main/res/values/strings.xml    # [MODIFIED] 광고 ID 문자열 추가
+RNoteApplication.kt                    # [MODIFIED] MobileAds.initialize()
+ui/components/BannerAd.kt             # [NEW] 재사용 가능 배너 컴포저블
+ui/notelist/NoteListScreen.kt         # [MODIFIED] Scaffold bottomBar 추가
+```
+
+---
+
+### 해결된 이슈
+
+| 이슈 | 원인 | 해결 |
+|------|------|------|
+| FAB이 네비게이션 바 뒤로 밀림 | `enableEdgeToEdge()` + Scaffold `bottomBar` → 네비게이션 바 인셋 처리가 bottomBar에 위임됨 | BannerAd에 `navigationBarsPadding()` 적용 |
+| 광고 영역 미표시 | 신규 AdMob 계정은 광고 인벤토리 준비까지 시간 필요 (최대 24시간) | Google 테스트 배너 ID로 통합 검증 완료 후 프로덕션 ID 복원 |
+
+---
+
+### 설계 결정 사항
+
+| 항목 | 결정 | 근거 |
+|------|------|------|
+| 광고 위치 | 노트 리스트만 | 노트 작성 시 집중 방해 방지 |
+| 광고 포맷 | BANNER (320×50) | 가장 작은 비침해적 포맷, UX 영향 최소화 |
+| 유료 플랜 | 없음 | 무료 앱 단일 모델 |
+| 광고 ID 관리 | strings.xml (translatable=false) | 빌드 variant별 관리 용이, 다국어 제외 |
+
+---
+
+### 다음 버전 후보 작업
+
+- [ ] 주간/월간 감정 통계 화면
+- [ ] 노트 검색 기능
+- [ ] 다크 모드 지원
+- [ ] ChatGPT API 직접 연동 (앱 내 분석 결과 표시)
+- [ ] 일본어/스페인어 추가 지원

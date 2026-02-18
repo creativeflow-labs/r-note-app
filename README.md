@@ -47,6 +47,11 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 - "Discard changes?" confirmation on back press
 - All data stored locally via Room database
 
+**Monetization** *(v1.0.0)*
+- Google AdMob bottom banner (320×50) on note list screen
+- Non-intrusive placement: no ads during note writing/editing
+- Free app model with no ad removal plan
+
 **Design** *(v0.2.2)*
 - Cloud Dancer (#F0EDE5) background + Charcoal (#2F2F2F) primary
 - Hahmlet custom font (Latin + Korean support)
@@ -68,6 +73,7 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 | Navigation | Navigation Compose |
 | Database | Room + KSP |
 | Preferences | DataStore |
+| Ads | Google AdMob (play-services-ads 24.3.0) |
 | Serialization | Gson |
 | Build | Gradle 8.13, AGP 9.0, Version Catalog |
 | Min SDK | 26 (Android 8.0) |
@@ -97,6 +103,7 @@ app/src/main/java/com/rnote/app/
     ├── onboarding/OnboardingScreen.kt
     ├── components/
     │   ├── PermissionBottomSheet.kt
+    │   ├── BannerAd.kt            # AdMob banner composable
     │   └── RNoteButton.kt         # Shared button component
     ├── note/                       # Editor screen + ViewModel
     └── notelist/                   # List screen + ViewModel
@@ -129,6 +136,16 @@ git clone https://github.com/creativeflow-labs/r-note-app.git
 ## Versioning
 
 This project follows [Semantic Versioning](https://semver.org/).
+
+### v1.0.0 — Google AdMob Banner Ad
+
+> Tag: [`v1.0.0`](https://github.com/creativeflow-labs/r-note-app/releases/tag/v1.0.0) | Date: 2026.02.17
+
+- Google AdMob bottom banner (320×50) on note list screen only
+- MobileAds SDK initialization in Application class
+- BannerAd composable with edge-to-edge navigation bar support
+- Ad unit IDs managed in strings.xml (translatable=false)
+- Free app model, no ad removal option
 
 ### v0.3.0 — Internationalization (i18n)
 

@@ -137,6 +137,15 @@ git clone https://github.com/creativeflow-labs/r-note-app.git
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+### v1.1.0 - User Guide Entry Point
+
+> Tag: [`v1.1.0`](https://github.com/creativeflow-labs/r-note-app/releases/tag/v1.1.0) | Date: 2026.03.14
+
+- Added a dedicated user guide icon next to the ChatGPT icon in the note list top bar
+- Linked the new guide entry point to the hosted Notion user guide
+- Added a custom journal-style icon asset for the guide action
+- Bumped Android release metadata for the next Google Play upload (`versionCode 4`, `versionName 1.1.0`)
+
 ### v1.0.0 — Google AdMob Banner Ad
 
 > Tag: [`v1.0.0`](https://github.com/creativeflow-labs/r-note-app/releases/tag/v1.0.0) | Date: 2026.02.17

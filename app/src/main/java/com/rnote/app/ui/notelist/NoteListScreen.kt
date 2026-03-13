@@ -2,6 +2,7 @@ package com.rnote.app.ui.notelist
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -100,6 +101,13 @@ fun NoteListScreen(
                 selectedCount = uiState.selectedIds.size,
                 totalCount = uiState.notes.size,
                 hasNotes = uiState.notes.isNotEmpty(),
+                onOpenGuide = {
+                    val guideIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(context.getString(R.string.user_guide_url))
+                    )
+                    context.startActivity(guideIntent)
+                },
                 onToggleEditMode = { viewModel.toggleEditMode() },
                 onSelectAll = { viewModel.selectAll() },
                 onDeselectAll = { viewModel.deselectAll() },
@@ -190,6 +198,7 @@ private fun NoteListTopBar(
     selectedCount: Int,
     totalCount: Int,
     hasNotes: Boolean,
+    onOpenGuide: () -> Unit,
     onToggleEditMode: () -> Unit,
     onSelectAll: () -> Unit,
     onDeselectAll: () -> Unit,
@@ -265,6 +274,14 @@ private fun NoteListTopBar(
                 }
             } else {
                 if (hasNotes) {
+                    IconButton(onClick = onOpenGuide) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_journal_text),
+                            contentDescription = stringResource(R.string.cd_user_guide),
+                            tint = SagePrimary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                     IconButton(onClick = onExportChatGptAll) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_openai),

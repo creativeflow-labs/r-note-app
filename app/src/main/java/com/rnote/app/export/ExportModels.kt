@@ -16,7 +16,7 @@ data class ExportPackage(
 
 data class ExportInfo(
     val app: String = "R:Note",
-    val version: String = "0.3.0",
+    val version: String = "1.1.0",
     val exported_at: String,
     val period: ExportPeriod,
     val total_notes: Int,

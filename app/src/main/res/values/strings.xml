@@ -40,11 +40,13 @@
     <string name="cd_export_selected">Export selected</string>
     <string name="cd_delete">Delete</string>
     <string name="done">Done</string>
+    <string name="cd_user_guide">User guide</string>
     <string name="cd_chatgpt_analysis">ChatGPT Analysis</string>
     <string name="cd_edit">Edit</string>
     <string name="empty_note_fallback">Emotion record</string>
     <string name="empty_state_title">No records yet</string>
     <string name="empty_state_desc">Tap the button on the bottom right\nto record your first emotion</string>
+    <string name="user_guide_url" translatable="false">https://magenta-clef-73f.notion.site/R-Note-User-Guide-32287e39e7c4806fa87ae84cc71dd715?source=copy_link</string>
 
     <!-- Prompt Selector -->
     <string name="prompt_selector_title">What analysis would you like from ChatGPT?</string>

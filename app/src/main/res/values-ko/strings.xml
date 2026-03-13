@@ -38,11 +38,13 @@
     <string name="cd_export_selected">선택 내보내기</string>
     <string name="cd_delete">삭제</string>
     <string name="done">완료</string>
+    <string name="cd_user_guide">사용자 가이드</string>
     <string name="cd_chatgpt_analysis">ChatGPT 분석</string>
     <string name="cd_edit">편집</string>
     <string name="empty_note_fallback">감정 기록</string>
     <string name="empty_state_title">아직 기록이 없어요</string>
     <string name="empty_state_desc">오른쪽 아래 버튼을 눌러\n첫 번째 감정을 기록해보세요</string>
+    <string name="user_guide_url" translatable="false">https://magenta-clef-73f.notion.site/R-Note-User-Guide-32287e39e7c4806fa87ae84cc71dd715?source=copy_link</string>
 
     <!-- Prompt Selector -->
     <string name="prompt_selector_title">ChatGPT에서 어떤 분석을 원하시나요?</string>

@@ -24,6 +24,8 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 
 **Note Management**
 - Note list grouped by date (locale-aware formatting)
+- Search records by title, body, emotion label, and date
+- Sort records by latest, oldest, best mood, and lowest mood
 - Edit mode with multi-select deletion and select all
 - Floating action button for quick entry
 - Tap to edit existing notes
@@ -33,6 +35,8 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 - Share notes to ChatGPT app with auto-generated analysis prompts
 - 3 prompt types: Emotion Pattern Analysis, Weekly/Monthly Report, Counseling
 - Export all notes or selected notes only
+- Export filtered search results for more focused ChatGPT analysis
+- Guardrails for long exports: up to 40 records or 60,000 characters per ChatGPT share
 - Localized prompts (English default optimized for ChatGPT response quality)
 
 **Internationalization (i18n)** *(v0.3.0)*
@@ -62,6 +66,10 @@ Splash → Onboarding (4 pages) → Permission Sheet → Note Editor → Note Li
 - 4-page horizontal pager onboarding
 - Storage permission bottom sheet (skippable)
 - Onboarding shown only on first launch
+
+**Update Flow** *(v1.2.0)*
+- Google Play in-app update check on app launch
+- Update prompt shown only when a newer Play Store version is available
 
 ## Tech Stack
 
@@ -136,6 +144,18 @@ git clone https://github.com/creativeflow-labs/r-note-app.git
 ## Versioning
 
 This project follows [Semantic Versioning](https://semver.org/).
+
+### v1.2.0 - Search, Sorting, and Export Refinement
+
+> Tag: [`v1.2.0`](https://github.com/creativeflow-labs/r-note-app/releases/tag/v1.2.0) | Date: 2026.05.29
+
+- Added record search with a top-bar search icon and focused search mode
+- Added sort options for latest, oldest, best mood, and lowest mood
+- Enabled ChatGPT export from filtered search results
+- Added export guardrails for large ChatGPT shares (`40` records / `60,000` characters)
+- Added Google Play in-app update check and update prompt
+- Improved edit/save stability by preserving existing note creation time
+- Bumped Android release metadata for Google Play upload (`versionCode 5`, `versionName 1.2.0`)
 
 ### v1.1.0 - User Guide Entry Point
 

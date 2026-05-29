@@ -15,8 +15,12 @@ import java.util.Date
 import java.util.Locale
 
 data class NoteListUiState(
-    val notes: List<NoteEntity> = emptyList(),
+    val allNotes: List<NoteEntity> = emptyList(),
+    val visibleNotes: List<NoteEntity> = emptyList(),
     val groupedNotes: Map<String, List<NoteEntity>> = emptyMap(),
+    val isSearchActive: Boolean = false,
+    val searchQuery: String = "",
+    val sortOption: NoteSortOption = NoteSortOption.LATEST,
     val isEditMode: Boolean = false,
     val selectedIds: Set<String> = emptySet(),
     val showPromptSelector: Boolean = false,
@@ -24,6 +28,13 @@ data class NoteListUiState(
 )
 
 enum class ExportTarget { ALL, SELECTED }
+
+enum class NoteSortOption {
+    LATEST,
+    OLDEST,
+    BEST_MOOD,
+    LOW_MOOD
+}
 
 class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
 
@@ -35,13 +46,77 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
     init {
         viewModelScope.launch {
             repository.getAllNotes().collect { notes ->
-                val grouped = notes.groupBy { note ->
-                    dateFormat.format(Date(note.createdAt))
-                }
                 _uiState.update {
-                    it.copy(notes = notes, groupedNotes = grouped)
+                    val visibleNotes = applySearchAndSort(
+                        notes = notes,
+                        query = it.searchQuery,
+                        sortOption = it.sortOption
+                    )
+                    it.copy(
+                        allNotes = notes,
+                        visibleNotes = visibleNotes,
+                        groupedNotes = groupNotes(visibleNotes),
+                        selectedIds = it.selectedIds.intersect(visibleNotes.map { note -> note.id }.toSet())
+                    )
                 }
             }
+        }
+    }
+
+    fun updateSearchQuery(query: String) {
+        _uiState.update {
+            val visibleNotes = applySearchAndSort(
+                notes = it.allNotes,
+                query = query,
+                sortOption = it.sortOption
+            )
+            it.copy(
+                isSearchActive = true,
+                searchQuery = query,
+                visibleNotes = visibleNotes,
+                groupedNotes = groupNotes(visibleNotes),
+                selectedIds = it.selectedIds.intersect(visibleNotes.map { note -> note.id }.toSet())
+            )
+        }
+    }
+
+    fun activateSearch() {
+        _uiState.update { it.copy(isSearchActive = true) }
+    }
+
+    fun closeSearch() {
+        _uiState.update {
+            val visibleNotes = applySearchAndSort(
+                notes = it.allNotes,
+                query = "",
+                sortOption = it.sortOption
+            )
+            it.copy(
+                isSearchActive = false,
+                searchQuery = "",
+                visibleNotes = visibleNotes,
+                groupedNotes = groupNotes(visibleNotes),
+                selectedIds = it.selectedIds.intersect(visibleNotes.map { note -> note.id }.toSet())
+            )
+        }
+    }
+
+    fun clearSearch() {
+        updateSearchQuery("")
+    }
+
+    fun updateSortOption(sortOption: NoteSortOption) {
+        _uiState.update {
+            val visibleNotes = applySearchAndSort(
+                notes = it.allNotes,
+                query = it.searchQuery,
+                sortOption = sortOption
+            )
+            it.copy(
+                sortOption = sortOption,
+                visibleNotes = visibleNotes,
+                groupedNotes = groupNotes(visibleNotes)
+            )
         }
     }
 
@@ -67,7 +142,7 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
 
     fun selectAll() {
         _uiState.update {
-            it.copy(selectedIds = it.notes.map { note -> note.id }.toSet())
+            it.copy(selectedIds = it.visibleNotes.map { note -> note.id }.toSet())
         }
     }
 
@@ -100,8 +175,48 @@ class NoteListViewModel(private val repository: NoteRepository) : ViewModel() {
     fun getNotesForExport(): List<NoteEntity> {
         val state = _uiState.value
         return when (state.exportTarget) {
-            ExportTarget.ALL -> state.notes
-            ExportTarget.SELECTED -> state.notes.filter { it.id in state.selectedIds }
+            ExportTarget.ALL -> state.visibleNotes
+            ExportTarget.SELECTED -> state.allNotes.filter { it.id in state.selectedIds }
+        }
+    }
+
+    private fun applySearchAndSort(
+        notes: List<NoteEntity>,
+        query: String,
+        sortOption: NoteSortOption
+    ): List<NoteEntity> {
+        val normalizedQuery = query.trim().lowercase(Locale.getDefault())
+        val filtered = if (normalizedQuery.isEmpty()) {
+            notes
+        } else {
+            notes.filter { note ->
+                val date = dateFormat.format(Date(note.createdAt))
+                listOf(
+                    note.title,
+                    note.body,
+                    note.emotionLabel,
+                    note.emotionEmoji,
+                    note.emotionScore.toString(),
+                    date
+                ).any { value -> value.lowercase(Locale.getDefault()).contains(normalizedQuery) }
+            }
+        }
+
+        return when (sortOption) {
+            NoteSortOption.LATEST -> filtered.sortedByDescending { it.createdAt }
+            NoteSortOption.OLDEST -> filtered.sortedBy { it.createdAt }
+            NoteSortOption.BEST_MOOD -> filtered.sortedWith(
+                compareByDescending<NoteEntity> { it.emotionScore }.thenByDescending { it.createdAt }
+            )
+            NoteSortOption.LOW_MOOD -> filtered.sortedWith(
+                compareBy<NoteEntity> { it.emotionScore }.thenByDescending { it.createdAt }
+            )
+        }
+    }
+
+    private fun groupNotes(notes: List<NoteEntity>): Map<String, List<NoteEntity>> {
+        return notes.groupBy { note ->
+            dateFormat.format(Date(note.createdAt))
         }
     }
 

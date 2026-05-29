@@ -57,7 +57,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(NoteUiState())
     val uiState: StateFlow<NoteUiState> = _uiState.asStateFlow()
 
-    private var initialState = NoteUiState()
+    private var loadedNote: NoteEntity? = null
 
     fun loadNote(noteId: String?) {
         if (noteId == null) {
@@ -75,7 +75,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
                         isEditing = false
                     )
                     _uiState.value = state
-                    initialState = state
+                    loadedNote = draft
                 }
             }
         } else {
@@ -91,7 +91,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
                     isEditing = true
                 )
                 _uiState.value = state
-                initialState = state
+                loadedNote = note
             }
         }
     }
@@ -121,10 +121,12 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
             val state = _uiState.value
             val sentiment = determineSentiment(state.emotionScore)
-            val wordCount = (state.title + " " + state.body).trim().split("\\s+".toRegex()).size
+            val wordCount = countWords(state.title, state.body)
+            val existingNote = loadedNote?.takeIf { it.id == state.id && !it.isDraft }
 
             val note = NoteEntity(
                 id = state.id.ifEmpty { java.util.UUID.randomUUID().toString() },
+                createdAt = existingNote?.createdAt ?: System.currentTimeMillis(),
                 emotionEmoji = state.selectedEmoji,
                 emotionScore = state.emotionScore,
                 emotionLabel = state.emotionLabel,
@@ -145,6 +147,7 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     fun saveDraft() {
         val state = _uiState.value
+        if (state.isEditing) return
         if (!state.hasChanges) return
         if (state.selectedEmoji.isEmpty() && state.body.isEmpty() && state.title.isEmpty()) return
 
@@ -166,6 +169,12 @@ class NoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     private fun determineSentiment(score: Int): String {
         return findEmotionLevel(score).sentiment
+    }
+
+    private fun countWords(title: String, body: String): Int {
+        val text = "$title $body".trim()
+        if (text.isEmpty()) return 0
+        return text.split("\\s+".toRegex()).size
     }
 
     class Factory(private val repository: NoteRepository) : ViewModelProvider.Factory {

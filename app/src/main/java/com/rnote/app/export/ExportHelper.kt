@@ -13,6 +13,9 @@ import java.util.Locale
 
 object ExportHelper {
 
+    const val MAX_CHATGPT_EXPORT_NOTES = 40
+    const val MAX_CHATGPT_EXPORT_CHARS = 60_000
+
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private val fileTimestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
 
@@ -39,7 +42,10 @@ object ExportHelper {
 
     fun createChatGptShareIntent(context: Context, notes: List<NoteEntity>, promptType: PromptType): Intent {
         val text = ExportMapper.toShareText(context, notes, promptType)
+        return createChatGptShareIntent(context, text)
+    }
 
+    fun createChatGptShareIntent(context: Context, text: String): Intent {
         return Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, text)

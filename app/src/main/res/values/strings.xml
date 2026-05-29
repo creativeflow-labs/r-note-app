@@ -41,12 +41,32 @@
     <string name="cd_delete">Delete</string>
     <string name="done">Done</string>
     <string name="cd_user_guide">User guide</string>
+    <string name="cd_search">Search records</string>
+    <string name="cd_close_search">Close search</string>
     <string name="cd_chatgpt_analysis">ChatGPT Analysis</string>
     <string name="cd_edit">Edit</string>
+    <string name="search_notes_placeholder">Search records</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="note_count">%d records</string>
+    <string name="search_result_count">%d results</string>
+    <string name="sort_latest">Latest</string>
+    <string name="sort_oldest">Oldest</string>
+    <string name="sort_best_mood">Best mood</string>
+    <string name="sort_low_mood">Lowest mood</string>
+    <string name="search_empty_title">No matching records</string>
+    <string name="search_empty_desc">Try another word or clear the search\nto see all records again</string>
     <string name="empty_note_fallback">Emotion record</string>
     <string name="empty_state_title">No records yet</string>
     <string name="empty_state_desc">Tap the button on the bottom right\nto record your first emotion</string>
     <string name="user_guide_url" translatable="false">https://magenta-clef-73f.notion.site/R-Note-User-Guide-32287e39e7c4806fa87ae84cc71dd715?source=copy_link</string>
+    <string name="export_limit_title">Too many records</string>
+    <string name="export_limit_message">Too many records to export at once.\nPlease reduce them by month or selection.</string>
+    <string name="ok">OK</string>
+
+    <!-- App Update -->
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_message">A new version of R:Note is available.\nUpdate from Google Play to use the latest improvements.</string>
+    <string name="update_now">Update</string>
 
     <!-- Prompt Selector -->
     <string name="prompt_selector_title">What analysis would you like from ChatGPT?</string>

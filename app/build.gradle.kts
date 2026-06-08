@@ -13,8 +13,8 @@ android {
         applicationId = "com.rnote.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "1.2.0"
+        versionCode = 6
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.play.services.ads)
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
+    implementation(libs.fragment)
 
     debugImplementation(libs.compose.ui.tooling)
 }

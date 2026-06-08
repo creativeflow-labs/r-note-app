@@ -2,6 +2,34 @@
 
 ---
 
+## ver.1.2.1 — SDK 경고 대응 및 릴리즈 정합성 보완
+
+**작업일**: 2026.06.08
+**Git Tag**: `v1.2.1`
+
+---
+
+### 구현 완료 항목
+
+#### 1. Google Play SDK 경고 대응
+- Play Console에서 경고로 표시된 `androidx.fragment:fragment:1.1.0` 전이 의존성 확인
+- Version Catalog에 AndroidX Fragment `1.8.9` 명시
+- Release runtime classpath에서 기존 `1.1.0`, `1.0.0` 요청이 모두 `1.8.9`로 해상되는지 확인
+
+#### 2. 릴리즈 메타데이터 정리
+- Google Play 업로드용 앱 버전 갱신
+- `versionCode`: 5 → 6
+- `versionName`: `1.2.0` → `1.2.1`
+- Export payload 버전 문자열을 `1.2.1`로 동기화
+
+#### 3. 배포 검증
+- `assembleRelease` 성공
+- `bundleRelease` 성공
+- 기존 `rnote-release.jks` / `rnote_release` 키로 signed AAB 생성
+- Google Play Console에서 `6 (1.2.1)` App Bundle 정상 인식
+
+---
+
 ## ver.1.2.0 — 검색, 정렬, 내보내기 고도화
 
 **작업일**: 2026.05.29

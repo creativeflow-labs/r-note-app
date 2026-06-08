@@ -145,6 +145,15 @@ git clone https://github.com/creativeflow-labs/r-note-app.git
 
 This project follows [Semantic Versioning](https://semver.org/).
 
+### v1.2.1 - SDK Maintenance Release
+
+> Tag: [`v1.2.1`](https://github.com/creativeflow-labs/r-note-app/releases/tag/v1.2.1) | Date: 2026.06.08
+
+- Updated AndroidX Fragment from transitive `1.1.0` to `1.8.9` for Google Play SDK warning resolution
+- Bumped Android release metadata for Google Play upload (`versionCode 6`, `versionName 1.2.1`)
+- Synced export payload version string to `1.2.1`
+- No user-facing feature changes in this maintenance release
+
 ### v1.2.0 - Search, Sorting, and Export Refinement
 
 > Tag: [`v1.2.0`](https://github.com/creativeflow-labs/r-note-app/releases/tag/v1.2.0) | Date: 2026.05.29
